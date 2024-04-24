@@ -1,0 +1,48 @@
+---
+
+version: "3.7"
+
+services:
+  transmission:
+    image: '{{ mediastack_transmission_image_uri }}:{{ mediastack_transmission_image_tag }}'
+    container_name: transmission
+    restart: always
+    environment:
+      TZ: '{{ mediastack_timezone }}'
+      PUID: '{{ mediastack_user_uid }}'
+      PGID: '{{ mediastack_user_gid }}'
+      TRANSMISSION_WEB_HOME: "/flood-for-transmission/"
+      WHITELIST: "*.*.*.*"
+    volumes:
+      - type: bind
+        source: ./config
+        target: /config
+        read_only: false
+      - type: bind
+        source: '{{ mediastack_data_dir }}/torrents'
+        target: /data/torrents
+        read_only: false
+    ports:
+      # Bind the web interface port to localhost, to allow Ansible to check
+      # container status, and allow for unproxied debugging.
+      - 127.0.0.1:{{ mediastack_transmission_host_port }}:9091
+      # Bind the tracker access port to all interfaces, to allow two-way
+      # communication between Transmission and torrent trackers.
+      - 0.0.0.0:51413:51413
+    networks:
+      - '{{ mediastack_network_name }}'
+{% for network in mediastack_service_networks %}
+{% if 'transmission' in (network.services | default([])) %}
+      - '{{ network.name }}'
+{% endif %}
+{% endfor %}
+
+networks:
+  '{{ mediastack_network_name }}':
+    name: '{{ mediastack_network_name }}'
+    external: true
+{% for network in mediastack_service_networks %}
+  '{{ network.name }}':
+    name: '{{ network.name }}'
+    external: true
+{% endfor %}

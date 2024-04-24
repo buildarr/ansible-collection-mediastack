@@ -1,0 +1,728 @@
+---
+# Sonarr instance configuration in Buildarr.
+
+sonarr:
+
+  # Configuration common to all instances.
+  port: 8989
+  protocol: "http"
+  settings:
+    media_management:
+      rename_episodes: true
+      replace_illegal_characters: true
+      standard_episode_format: >-
+        {Series TitleYear} [imdbid-{ImdbId}]
+        -
+        S{season:00}E{episode:00}
+        -
+        {Episode CleanTitle}
+        [{Preferred Words }{Quality Full}]
+        {[MediaInfo VideoDynamicRangeType]}
+        [{MediaInfo VideoBitDepth}bit]
+        {[MediaInfo VideoCodec]}
+        [{Mediainfo AudioCodec}{ Mediainfo AudioChannels}]
+        {[MediaInfo AudioLanguages]}
+        {[Release Group]}
+        -
+        Default
+      daily_episode_format: >-
+        {Series TitleYear} [imdbid-{ImdbId}]
+        -
+        {Air-Date}
+        -
+        {Episode CleanTitle}
+        [{Preferred Words }{Quality Full}]
+        {[MediaInfo VideoDynamicRangeType]}
+        [{MediaInfo VideoBitDepth}bit]
+        {[MediaInfo VideoCodec]}
+        [{Mediainfo AudioCodec}{ Mediainfo AudioChannels}]
+        {[MediaInfo AudioLanguages]}
+        {[Release Group]}
+        -
+        Default
+      anime_episode_format: >-
+        {Series TitleYear} [imdbid-{ImdbId}]
+        -
+        S{season:00}E{episode:00}
+        -
+        {absolute:000}
+        -
+        {Episode CleanTitle}
+        [{Preferred Words }{Quality Full}]
+        {[MediaInfo VideoDynamicRangeType]}
+        [{MediaInfo VideoBitDepth}bit]
+        {[MediaInfo VideoCodec]}
+        [{Mediainfo AudioCodec}{ Mediainfo AudioChannels}]
+        {MediaInfo AudioLanguages}
+        {[Release Group]}
+        -
+        Default
+      series_folder_format: "{Series TitleYear} [imdbid-{ImdbId}]"
+      season_folder_format: "Season {season:00}"
+      specials_folder_format: "Specials"
+      multiepisode_style: "range"
+      create_empty_series_folders: false
+      delete_empty_folders: false
+      episode_title_required: "always"
+      use_hardlinks: true
+      import_extra_files: false
+      unmonitor_deleted_files: false
+      propers_and_repacks: "do-not-prefer"
+      analyze_video_files: true
+      rescan_series_folder_after_refresh: "always"
+      change_file_date: "none"
+      # recycling_bin: "/videos/shows/deleted"
+      recycling_bin_cleanup: 28
+      set_permissions: false
+      chmod_folder: drwxr-xr-x
+      chown_group: null
+      delete_unmanaged_root_folders: false
+      # root_folders:
+      #  - "/data"
+    profiles:
+      quality_profiles:
+        delete_unmanaged: true
+      language_profiles:
+        delete_unmanaged: true
+      delay_profiles:
+        definitions:
+          - preferred_protocol: "torrent-prefer"
+            usenet_delay: 0
+            torrent_delay: 1440
+            bypass_if_highest_quality: true
+      release_profiles:
+        delete_unmanaged: true
+    metadata:
+      kodi_emby:
+        enable: false
+        series_metadata: true
+        series_metadata_url: true
+        episode_metadata: true
+        series_images: true
+        season_images: true
+        episode_images: true
+      roksbox:
+        enable: false
+        episode_metadata: true
+        series_images: true
+        season_images: true
+        episode_images: true
+      wdtv:
+        enable: false
+        episode_metadata: true
+        series_images: true
+        season_images: true
+        episode_images: true
+    general:
+      proxy:
+        enable: false
+      logging:
+        log_level: "DEBUG"
+      analytics:
+        send_anonymous_usage_data: false
+      updates:
+        branch: "main"
+        automatic: false
+        mechanism: "docker"
+      backup:
+        folder: "Backups"
+        interval: 7
+        retention: 28
+    ui:
+      first_day_of_week: "monday"
+      week_column_header: "day-first"
+      short_date_format: "word-month-second"
+      long_date_format: "day-first"
+      time_format: "twentyfour-hour"
+      show_relative_dates: true
+      enable_color_impaired_mode: false
+
+  # Instance-specific configuration.
+  instances:
+
+    # Sonarr instance for grabbing HD/SD TV shows.
+    sonarr-hd:
+      api_key: "{{ mediastack_temp_api_keys['sonarr-hd'] }}"
+      settings:
+        media_management:
+          root_folders:
+            - /data/media/shows/hd
+        profiles:
+          quality_profiles:
+            definitions:
+              "HD/SD Shows":
+                upgrades_allowed: true
+                upgrade_until: "Bluray-1080p"
+                qualities:
+                  - "Bluray-1080p"
+                  - name: "WEB 1080p"
+                    members:
+                      - "WEBRip-1080p"
+                      - "WEBDL-1080p"
+                  - "HDTV-1080p"
+                  - "Bluray-720p"
+                  - name: "WEB 720p"
+                    members:
+                      - "WEBRip-720p"
+                      - "WEBDL-720p"
+                  - "HDTV-720p"
+                  - "Raw-HD"
+                  - "Bluray-480p"
+                  - "DVD"
+                  - name: "WEB 480p"
+                    members:
+                      - "WEBRip-480p"
+                      - "WEBDL-480p"
+                  - "SDTV"
+          language_profiles:
+            definitions:
+              "English":
+                upgrades_allowed: false
+                languages:
+                  - "English"
+          release_profiles:
+            definitions:
+              "Release Sources (Streaming Service)":
+                trash_id: 1B018E0C53EC825085DD911102E2CA36
+                strict_negative_scores: false
+                include_preferred_when_renaming: true
+              "P2P Groups + Repack/Proper":
+                trash_id: 71899E6C303A07AF0E4746EFF9873532
+                strict_negative_scores: false
+                include_preferred_when_renaming: false  # Consistent with guide.
+              "Low Quality Groups":
+                trash_id: EBC725268D687D588A20CBC5F97E538B
+                strict_negative_scores: false
+                include_preferred_when_renaming: false  # Consistent with guide.
+              "Optionals":
+                trash_id: 76e060895c5b8a765c310933da0a5357
+                strict_negative_scores: false
+                include_preferred_when_renaming: false  # Consistent with guide.
+                filter:
+                  include:
+                    - fa47da3377076d82d07c4e95b3f13d07  # Prefer Dolby Vision (HDR)
+                    - bc7a6383cbe88c3ee2d6396e1aacc0b3  # Prefer HDR
+                    - ea83f4740cec4df8112f3d6dd7c82751  # Prefer Season Packs
+                    - 6f2aefa61342a63387f2a90489e90790  # Dislike renamed/retagged releases
+                    - 19cd5ecc0a24bf493a75e80a51974cdd  # Dislike retagged/obfuscated groups
+                    - 6a7b462c6caee4a991a9d8aa38ce2405  # Dislike release ending: en
+                    - 236a3626a07cacf5692c73cc947bc280  # Dislike release containing: 1-
+                    - cec8880b847dd5d31d29167ee0112b57  # Ignore 720p/1080p HEVC re-encodes (Golden Rule)
+                    - 436f5a7d08fbf02ba25cb5e5dfe98e55  # Ignore Dolby Vision without HDR10 fallback
+                    - f3f0f3691c6a1988d4a02963e69d11f2  # Ignore The Group -SCENE
+                    - 5bc23c3a055a1a5d8bbe4fb49d80e0cb  # Ignore so-called scene releases
+                    - 538bad00ee6f8aced8e0db5218b8484c  # Ignore Bad Dual Audio Groups
+                    - 4861d8238f9234606df6721df6e27deb  # Ignore AV1
+        quality:
+          # trash_id: "bef99584217af744e404ed44a33af589"  # series
+          # Set the maximum quality on HD/SD shows to be high, but not so high
+          # that it overlaps with the 4K versions.
+          # TODO: When upgrading to Sonarr V4, set the maximum quality to null
+          # to make the maximum quality a 'soft' limit, to ensure *any* version
+          # is downloaded if only one is available.
+          definitions:
+            SDTV:
+              min: 0
+              preferred: 85
+              max: 86
+            WEBRip-480p:
+              min: 0
+              preferred: 85
+              max: 86
+            WEBDL-480p:
+              min: 0
+              preferred: 85
+              max: 86
+            DVD:
+              min: 0
+              preferred: 85
+              max: 86
+            Bluray-480p:
+              min: 0
+              preferred: 85
+              max: 86
+            Raw-HD:
+              min: 0
+              preferred: 85
+              max: 86
+            HDTV-720p:
+              min: 0
+              preferred: 85
+              max: 86
+            WEBRip-720p:
+              min: 0
+              preferred: 85
+              max: 86
+            WEBDL-720p:
+              min: 0
+              preferred: 85
+              max: 86
+            Bluray-720p:
+              min: 0
+              preferred: 85
+              max: 86
+            HDTV-1080p:
+              min: 0
+              preferred: 85
+              max: 86
+            WEBRip-1080p:
+              min: 0
+              preferred: 85
+              max: 86
+            WEBDL-1080p:
+              min: 0
+              preferred: 85
+              max: 86
+            Bluray-1080p:
+              min: 0
+              preferred: 85
+              max: 86
+        download_clients:
+          definitions:
+            "Transmission (HD Shows)":
+              type: "transmission"
+              enable: true
+              host: "transmission"
+              port: 9091
+              use_ssl: false
+              url_base: "/transmission/"
+              username: null
+              password: null
+              # category: "hd"
+              directory: "/data/torrents/shows/hd"
+              recent_priority: "last"
+              older_priority: "last"
+              add_paused: false
+        connect:
+          delete_unmanaged: true
+{% if mediastack_sonarr_hd_email_enable or mediastack_sonarr_hd_pushover_enable %}
+          definitions:
+{% if mediastack_sonarr_hd_email_enable %}
+            email:
+              type: email
+              enable: true
+              server: '{{ mediastack_sonarr_email_smtp_hostname }}'
+              port: {{ mediastack_email_smtp_port }}
+              use_encryption: true
+              username: '{{ mediastack_sonarr_email_smtp_username }}'
+              password: '{{ mediastack_sonarr_email_smtp_password }}'
+              from_address: '{{ mediastack_sonarr_hd_email_from_address }}'
+              recipient_addresses:
+                - '{{ mediastack_sonarr_hd_email_recipient_address }}'
+              notification_triggers:
+                on_grab: true
+                on_import: true
+                on_upgrade: true
+                on_series_delete: true
+                on_episode_file_delete: true
+                on_episode_file_delete_for_upgrade: true
+                on_health_issue: true
+                include_health_warnings: true
+                on_application_update: true
+{% endif %}
+{% if mediastack_sonarr_hd_pushover_enable %}
+            pushover:
+              type: pushover
+              enable: true
+              user_key: '{{ mediastack_sonarr_hd_pushover_user_key }}'
+              api_key: '{{ mediastack_sonarr_hd_pushover_api_key }}'
+              notification_triggers:
+                on_grab: false
+                on_import: false
+                on_upgrade: false
+                on_series_delete: false
+                on_episode_file_delete: false
+                on_episode_file_delete_for_upgrade: true
+                on_health_issue: true
+                include_health_warnings: true
+                on_application_update: false
+{% endif %}
+{% else %}
+      definitions: {}
+{% endif %}
+        general:
+          host:
+            instance_name: "Sonarr (HD/SD TV Shows)"
+
+    # Sonarr instance for grabbing 4K TV shows.
+    sonarr-4k:
+      api_key: "{{ mediastack_temp_api_keys['sonarr-4k'] }}"
+      settings:
+        media_management:
+          standard_episode_format: >-
+            {Series TitleYear}
+            -
+            S{season:00}E{episode:00}
+            -
+            {Episode CleanTitle}
+            [{Preferred Words }{Quality Full}]
+            {[MediaInfo VideoDynamicRangeType]}
+            [{MediaInfo VideoBitDepth}bit]
+            {[MediaInfo VideoCodec]}
+            [{Mediainfo AudioCodec} {Mediainfo AudioChannels}]
+            {[MediaInfo AudioLanguages]}
+            {[Release Group]}
+          daily_episode_format: >-
+            {Series TitleYear}
+            -
+            {Air-Date}
+            -
+            {Episode CleanTitle}
+            [{Preferred Words }{Quality Full}]
+            {[MediaInfo VideoDynamicRangeType]}
+            [{MediaInfo VideoBitDepth}bit]
+            {[MediaInfo VideoCodec]}
+            [{Mediainfo AudioCodec} {Mediainfo AudioChannels}]
+            {[MediaInfo AudioLanguages]}
+            {[Release Group]}
+          anime_episode_format: >-
+            {Series TitleYear}
+            -
+            S{season:00}E{episode:00}
+            -
+            {absolute:000}
+            -
+            {Episode CleanTitle}
+            [{Preferred Words }{Quality Full}]
+            {[MediaInfo VideoDynamicRangeType]}
+            [{MediaInfo VideoBitDepth}bit]
+            {[MediaInfo VideoCodec]}
+            [{Mediainfo AudioCodec} { Mediainfo AudioChannels}]
+            {MediaInfo AudioLanguages}
+            {[Release Group]}
+          root_folders:
+            - /data/media/shows/4k
+        profiles:
+          quality_profiles:
+            definitions:
+              "4K Shows":
+                upgrades_allowed: true
+                upgrade_until: "Bluray-2160p"
+                qualities:
+                  - "Bluray-2160p"
+                  - name: "WEB 2160p"
+                    members:
+                      - "WEBRip-2160p"
+                      - "WEBDL-2160p"
+                  - "HDTV-2160p"
+          language_profiles:
+            definitions:
+              "English":
+                upgrades_allowed: false
+                languages:
+                  - "English"
+          release_profiles:
+            delete_unmanaged: true
+            definitions:
+              "Release Sources (Streaming Service)":
+                trash_id: 1B018E0C53EC825085DD911102E2CA36
+                strict_negative_scores: false
+                include_preferred_when_renaming: true
+              "P2P Groups + Repack/Proper":
+                trash_id: 71899E6C303A07AF0E4746EFF9873532
+                strict_negative_scores: false
+                include_preferred_when_renaming: false  # Consistent with guide.
+              "Low Quality Groups":
+                trash_id: EBC725268D687D588A20CBC5F97E538B
+                strict_negative_scores: false
+                include_preferred_when_renaming: false  # Consistent with guide.
+              "Optionals":
+                trash_id: 76e060895c5b8a765c310933da0a5357
+                strict_negative_scores: false
+                include_preferred_when_renaming: false  # Consistent with guide.
+                filter:
+                  include:
+                    - fa47da3377076d82d07c4e95b3f13d07  # Prefer Dolby Vision (HDR)
+                    - bc7a6383cbe88c3ee2d6396e1aacc0b3  # Prefer HDR
+                    - ea83f4740cec4df8112f3d6dd7c82751  # Prefer Season Packs
+                    - 6f2aefa61342a63387f2a90489e90790  # Dislike renamed/retagged releases
+                    - 19cd5ecc0a24bf493a75e80a51974cdd  # Dislike retagged/obfuscated groups
+                    - 6a7b462c6caee4a991a9d8aa38ce2405  # Dislike release ending: en
+                    - 236a3626a07cacf5692c73cc947bc280  # Dislike release containing: 1-
+                    # - cec8880b847dd5d31d29167ee0112b57  # Ignore 720p/1080p HEVC re-encodes (Golden Rule)
+                    - 436f5a7d08fbf02ba25cb5e5dfe98e55  # Ignore Dolby Vision without HDR10 fallback
+                    - f3f0f3691c6a1988d4a02963e69d11f2  # Ignore The Group -SCENE
+                    - 5bc23c3a055a1a5d8bbe4fb49d80e0cb  # Ignore so-called scene releases
+                    - 538bad00ee6f8aced8e0db5218b8484c  # Ignore Bad Dual Audio Groups
+                    - 4861d8238f9234606df6721df6e27deb  # Ignore AV1
+        quality:
+          # trash_id: "bef99584217af744e404ed44a33af589"  # series
+          # Set the minimum quality to be at least the limit for HD/SD shows,
+          # but otherwise no limits on quality on 4K movies.
+          definitions:
+            HDTV-2160p:
+              min: 85
+              preferred: null
+              max: null
+            WEBRip-2160p:
+              min: 85
+              preferred: null
+              max: null
+            WEBDL-2160p:
+              min: 85
+              preferred: null
+              max: null
+            Bluray-2160p:
+              min: 85
+              preferred: null
+              max: null
+            Bluray-2160p Remux:
+              min: 85
+              preferred: null
+              max: null
+        download_clients:
+          definitions:
+            "Transmission (4K Shows)":
+              type: "transmission"
+              enable: true
+              host: "transmission"
+              port: 9091
+              use_ssl: false
+              url_base: "/transmission/"
+              username: null
+              password: null
+              # category: "4k"
+              directory: "/data/torrents/shows/4k"
+              recent_priority: "last"
+              older_priority: "last"
+              add_paused: false
+        connect:
+          delete_unmanaged: true
+{% if mediastack_sonarr_4k_email_enable or mediastack_sonarr_4k_pushover_enable %}
+          definitions:
+{% if mediastack_sonarr_4k_email_enable %}
+            email:
+              type: email
+              enable: true
+              server: '{{ mediastack_sonarr_email_smtp_hostname }}'
+              port: {{ mediastack_email_smtp_port }}
+              use_encryption: true
+              username: '{{ mediastack_sonarr_email_smtp_username }}'
+              password: '{{ mediastack_sonarr_email_smtp_password }}'
+              from_address: '{{ mediastack_sonarr_4k_email_from_address }}'
+              recipient_addresses:
+                - '{{ mediastack_sonarr_4k_email_recipient_address }}'
+              notification_triggers:
+                on_grab: true
+                on_import: true
+                on_upgrade: true
+                on_series_delete: true
+                on_episode_file_delete: true
+                on_episode_file_delete_for_upgrade: true
+                on_health_issue: true
+                include_health_warnings: true
+                on_application_update: true
+{% endif %}
+{% if mediastack_sonarr_4k_pushover_enable %}
+            pushover:
+              type: pushover
+              enable: true
+              user_key: '{{ mediastack_sonarr_4k_pushover_user_key }}'
+              api_key: '{{ mediastack_sonarr_4k_pushover_api_key }}'
+              notification_triggers:
+                on_grab: false
+                on_import: false
+                on_upgrade: false
+                on_series_delete: false
+                on_episode_file_delete: false
+                on_episode_file_delete_for_upgrade: true
+                on_health_issue: true
+                include_health_warnings: true
+                on_application_update: false
+{% endif %}
+{% else %}
+      definitions: {}
+{% endif %}
+        general:
+          host:
+            instance_name: "Sonarr (4K Shows)"
+
+    # Sonarr instance for grabbing anime shows.
+    sonarr-anime:
+      api_key: "{{ mediastack_temp_api_keys['sonarr-anime'] }}"
+      settings:
+        media_management:
+          root_folders:
+            - /data/media/shows/anime
+        profiles:
+          quality_profiles:
+            definitions:
+              "HD/SD Anime Shows":
+                upgrades_allowed: true
+                upgrade_until: "Bluray-1080p Remux"
+                qualities:
+                  - "Bluray-1080p Remux"
+                  - "Bluray-1080p"
+                  - name: "WEB 1080p"
+                    members:
+                      - "WEBRip-1080p"
+                      - "WEBDL-1080p"
+                  - "HDTV-1080p"
+                  - "Bluray-720p"
+                  - name: "WEB 720p"
+                    members:
+                      - "WEBRip-720p"
+                      - "WEBDL-720p"
+                  - "HDTV-720p"
+                  - "Raw-HD"
+                  - "Bluray-480p"
+                  - "DVD"
+                  - name: "WEB 480p"
+                    members:
+                      - "WEBRip-480p"
+                      - "WEBDL-480p"
+                  - "SDTV"
+          language_profiles:
+            definitions:
+              "Anime":
+                upgrades_allowed: true
+                upgrade_until: "Japanese"
+                languages:
+                  - "Japanese"
+                  - "English"
+          release_profiles:
+            definitions:
+              "Anime Profile 1":
+                # - Prefer uncensored
+                # - Prefer Multi-Audio or Dual-Audio
+                # https://trash-guides.info/Sonarr/Sonarr-Release-Profile-RegEx-Anime/#first-release-profile
+                trash_id: d428eda85af1df8904b4bbe4fc2f537c
+                strict_negative_scores: false
+                include_preferred_when_renaming: true
+              "Anime Profile 2":
+                # Prioritise/ignore releases based on group.
+                # TODO: May need to adjust based on actual results.
+                # https://trash-guides.info/Sonarr/Sonarr-Release-Profile-RegEx-Anime/#second-release-profile
+                trash_id: 6cd9e10bb5bb4c63d2d7cd3279924c7b
+                strict_negative_scores: false
+                include_preferred_when_renaming: false  # Consistent with guide.
+        quality:
+          # trash_id: "387e6278d8e06083d813358762e0ac63"  # anime
+          # No limits on quality for anime, as there are no 4K versions.
+          definitions:
+            SDTV:
+              min: 0
+              preferred: null
+              max: null
+            WEBRip-480p:
+              min: 0
+              preferred: null
+              max: null
+            WEBDL-480p:
+              min: 0
+              preferred: null
+              max: null
+            DVD:
+              min: 0
+              preferred: null
+              max: null
+            Bluray-480p:
+              min: 0
+              preferred: null
+              max: null
+            Raw-HD:
+              min: 0
+              preferred: null
+              max: null
+            HDTV-720p:
+              min: 0
+              preferred: null
+              max: null
+            WEBRip-720p:
+              min: 0
+              preferred: null
+              max: null
+            WEBDL-720p:
+              min: 0
+              preferred: null
+              max: null
+            Bluray-720p:
+              min: 0
+              preferred: null
+              max: null
+            HDTV-1080p:
+              min: 0
+              preferred: null
+              max: null
+            WEBRip-1080p:
+              min: 0
+              preferred: null
+              max: null
+            WEBDL-1080p:
+              min: 0
+              preferred: null
+              max: null
+            Bluray-1080p:
+              min: 0
+              preferred: null
+              max: null
+            Bluray-1080p Remux:
+              min: 0
+              preferred: null
+              max: null
+        download_clients:
+          definitions:
+            "Transmission (Anime)":
+              type: "transmission"
+              enable: true
+              host: "transmission"
+              port: 9091
+              use_ssl: false
+              url_base: "/transmission/"
+              username: null
+              password: null
+              # category: "anime"
+              directory: "/data/torrents/shows/anime"
+              recent_priority: "last"
+              older_priority: "last"
+              add_paused: false
+        connect:
+          delete_unmanaged: true
+{% if mediastack_sonarr_anime_email_enable or mediastack_sonarr_anime_pushover_enable %}
+          definitions:
+{% if mediastack_sonarr_anime_email_enable %}
+            email:
+              type: email
+              enable: true
+              server: '{{ mediastack_sonarr_email_smtp_hostname }}'
+              port: {{ mediastack_email_smtp_port }}
+              use_encryption: true
+              username: '{{ mediastack_sonarr_email_smtp_username }}'
+              password: '{{ mediastack_sonarr_email_smtp_password }}'
+              from_address: '{{ mediastack_sonarr_anime_email_from_address }}'
+              recipient_addresses:
+                - '{{ mediastack_sonarr_anime_email_recipient_address }}'
+              notification_triggers:
+                on_grab: true
+                on_import: true
+                on_upgrade: true
+                on_series_delete: true
+                on_episode_file_delete: true
+                on_episode_file_delete_for_upgrade: true
+                on_health_issue: true
+                include_health_warnings: true
+                on_application_update: true
+{% endif %}
+{% if mediastack_sonarr_anime_pushover_enable %}
+            pushover:
+              type: pushover
+              enable: true
+              user_key: '{{ mediastack_sonarr_anime_pushover_user_key }}'
+              api_key: '{{ mediastack_sonarr_anime_pushover_api_key }}'
+              notification_triggers:
+                on_grab: false
+                on_import: false
+                on_upgrade: false
+                on_series_delete: false
+                on_episode_file_delete: false
+                on_episode_file_delete_for_upgrade: true
+                on_health_issue: true
+                include_health_warnings: true
+                on_application_update: false
+{% endif %}
+{% else %}
+      definitions: {}
+{% endif %}
+        general:
+          host:
+            instance_name: "Sonarr (Anime Shows)"

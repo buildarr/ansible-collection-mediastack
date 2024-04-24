@@ -1,0 +1,14 @@
+---
+
+mediastack_mergerfs_fstype: "fuse.mergerfs"
+mediastack_mergerfs_opts: "\
+  ro,\
+  allow_other,\
+  use_ino,\
+  nonempty,\
+  inodecalc=passthrough,\
+  follow-symlinks=all,\
+  cache.files=off,\
+  dropcacheonclose=true,\
+  category.create=mfs,\
+  func.getattr=newest"

@@ -1,0 +1,12 @@
+---
+
+mediastack_jellyfin_image_uri: lscr.io/linuxserver/jellyfin
+mediastack_jellyfin_image_tag: 10.8.11
+
+mediastack_jellyfin_host_port: 8096
+
+mediastack_jellyfin_admin_username: admin
+# mediastack_jellyfin_admin_password must be encrypted using Ansible Vault.
+mediastack_jellyfin_admin_email_address: admin@example.com
+
+mediastack_jellyfin_external_url: http://localhost:8096

@@ -1,0 +1,97 @@
+---
+
+- name: Set common default variables
+  ansible.builtin.import_role:
+    name: common
+
+- name: Initialise temporary variables
+  ansible.builtin.set_fact:
+    mediastack_temp_ipam_config: []
+
+- name: Create service group
+  ansible.builtin.group:
+    name: mediastack
+    gid: "{{ mediastack_user_gid }}"
+
+- name: Create service user
+  ansible.builtin.user:
+    name: mediastack
+    uid: "{{ mediastack_user_uid }}"
+    group: mediastack
+    groups:
+      - video
+      - render
+    home: /opt/mediastack
+    create_home: false
+    shell: /usr/sbin/nologin
+
+- name: Create environment directory
+  ansible.builtin.file:
+    state: directory
+    path: /opt/mediastack
+    owner: root
+    group: docker
+    mode: "0755"
+
+- name: Create service management scripts
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/opt/mediastack/{{ item }}"
+    owner: root
+    group: docker
+    mode: "0755"
+  loop:
+    - start.sh
+    - stop.sh
+
+- name: Create data directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ mediastack_data_dir }}"
+    owner: mediastack
+    group: mediastack
+    mode: "0755"
+
+- name: Create media subdirectories in the data directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ mediastack_data_dir }}/{{ item }}"
+    owner: mediastack
+    group: mediastack
+    mode: "0755"
+  loop:
+    - torrents
+    - torrents/shows
+    - torrents/shows/hd
+    - torrents/shows/4k
+    - torrents/shows/anime
+    - torrents/movies
+    - torrents/movies/hd
+    - torrents/movies/4k
+    - torrents/movies/anime
+    - media
+    - media/shows
+    - media/shows/hd
+    - media/shows/4k
+    - media/shows/anime
+    - media/movies
+    - media/movies/hd
+    - media/movies/4k
+    - media/movies/anime
+    - videos
+    - videos/shows
+    - videos/movies
+    - videos/anime
+    - videos/anime/shows
+    - videos/anime/movies
+
+- name: Create service network IPAM config
+  ansible.builtin.set_fact:
+    mediastack_temp_ipam_config: >-
+      {{ (mediastack_temp_ipam_config | default([])) + [{'subnet': item}] }}
+  loop: "{{ mediastack_network_subnets }}"
+
+- name: Create service network (as a standalone network)
+  community.docker.docker_network:
+    name: "{{ mediastack_network_name }}"
+    ipam_config: "{{ mediastack_temp_ipam_config }}"

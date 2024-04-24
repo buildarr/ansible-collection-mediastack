@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -euo pipefail
+
+service_dirs="buildarr jellyseerr prowlarr {{ ['radarr/'] | product(mediastack_radarr_instances | map(attribute='name')) | map('join') | reverse | join(' ') }} {{ ['sonarr/'] | product(mediastack_sonarr_instances | map(attribute='name')) | map('join') | reverse | join(' ') }} flaresolverr transmission jellyfin"
+
+for service_dir in $service_dirs
+do
+    cd "/opt/mediastack/${service_dir}"
+    docker compose --file docker-compose.yml down
+done

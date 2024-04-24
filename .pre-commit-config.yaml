@@ -1,0 +1,33 @@
+---
+# .pre-commit-config.yaml
+# Pre-commit hook tasks.
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks.git
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+      - id: end-of-file-fixer
+      - id: detect-private-key
+      - id: check-added-large-files
+      - id: check-merge-conflict
+  - repo: https://github.com/crate-ci/typos.git
+    rev: v1.20.4
+    hooks:
+      - id: typos
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+  - repo: https://github.com/ansible-community/ansible-lint.git
+    rev: v24.2.1
+    hooks:
+      - id: ansible-lint
+  # - repo: https://github.com/ansible-community/antsibull-changelog.git
+  #   rev: 0.26.0
+  #   hooks:
+  #     - id: antsibull-changelog-lint
+  #     - id: antsibull-changelog-lint-changelog-yaml

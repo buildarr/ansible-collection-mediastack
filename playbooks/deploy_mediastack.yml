@@ -1,0 +1,15 @@
+---
+
+- name: Deploy Media Stack on configured hosts
+  hosts: mediastack
+  become: true
+  roles:
+    - buildarr.mediastack.base
+    - buildarr.mediastack.jellyfin
+    - buildarr.mediastack.transmission
+    - buildarr.mediastack.flaresolverr
+    - buildarr.mediastack.sonarr
+    - buildarr.mediastack.radarr
+    - buildarr.mediastack.prowlarr
+    - buildarr.mediastack.jellyseerr
+    - buildarr.mediastack.buildarr

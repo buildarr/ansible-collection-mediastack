@@ -1,0 +1,49 @@
+---
+
+version: "3.7"
+
+services:
+  '{{ sonarr_instance.name }}':
+    image: '{{ mediastack_sonarr_image_uri }}:{{ mediastack_sonarr_image_tag }}'
+    container_name: '{{ sonarr_instance.name }}'
+    restart: always
+    environment:
+      TZ: '{{ mediastack_timezone }}'
+      PUID: '{{ mediastack_user_uid }}'
+      PGID: '{{ mediastack_user_gid }}'
+    volumes:
+      - type: bind
+        source: ./config
+        target: /config
+        read_only: false
+      - type: bind
+        source: '{{ mediastack_data_dir }}/torrents'
+        target: /data/torrents
+        read_only: false
+      - type: bind
+        source: '{{ mediastack_data_dir }}/media'
+        target: /data/media
+        read_only: false
+      - type: bind
+        source: '{{ mediastack_data_dir }}/videos'
+        target: /data/videos
+        read_only: false
+    ports:
+      - 127.0.0.1:{{ sonarr_instance.host_port }}:8989
+    networks:
+      - '{{ mediastack_network_name }}'
+{% for network in mediastack_service_networks %}
+{% if sonarr_instance.name in (network.services | default([])) %}
+      - '{{ network.name }}'
+{% endif %}
+{% endfor %}
+
+networks:
+  '{{ mediastack_network_name }}':
+    name: '{{ mediastack_network_name }}'
+    external: true
+{% for network in mediastack_service_networks %}
+  '{{ network.name }}':
+    name: '{{ network.name }}'
+    external: true
+{% endfor %}

@@ -1,0 +1,54 @@
+---
+
+mediastack_sonarr_image_uri: lscr.io/linuxserver/sonarr
+mediastack_sonarr_image_tag: 3.0.10
+
+mediastack_sonarr_instances:
+  - name: sonarr-hd
+    host_port: 8989
+    default: true
+    is_4k: false
+  - name: sonarr-4k
+    host_port: 8990
+    default: true
+    is_4k: true
+  - name: sonarr-anime
+    host_port: 8991
+
+mediastack_sonarr_hd_external_url: http://localhost:8989
+mediastack_sonarr_4k_external_url: http://localhost:8990
+mediastack_sonarr_anime_external_url: http://localhost:8991
+
+mediastack_sonarr_email_enable: "{{ mediastack_email_enable }}"
+mediastack_sonarr_email_from_name: "{{ mediastack_email_from_name }}"
+mediastack_sonarr_email_from_address: "{{ mediastack_email_from_address }}"
+mediastack_sonarr_email_recipient_name: "{{ mediastack_email_recipient_name }}"
+mediastack_sonarr_email_recipient_address: "{{ mediastack_email_recipient_address }}"
+mediastack_sonarr_email_smtp_hostname: "{{ mediastack_email_smtp_hostname }}"
+mediastack_sonarr_email_smtp_port: "{{ mediastack_email_smtp_port }}"
+mediastack_sonarr_email_smtp_username: "{{ mediastack_email_smtp_username }}"
+mediastack_sonarr_email_smtp_password: "{{ mediastack_email_smtp_password }}"
+
+mediastack_sonarr_hd_email_enable: "{{ mediastack_sonarr_email_enable }}"
+mediastack_sonarr_hd_email_from_name: "{{ mediastack_sonarr_email_from_name }}"
+mediastack_sonarr_hd_email_from_address: "{{ mediastack_sonarr_email_from_address }}"
+mediastack_sonarr_4k_email_enable: "{{ mediastack_sonarr_email_enable }}"
+mediastack_sonarr_4k_email_from_name: "{{ mediastack_sonarr_email_from_name }}"
+mediastack_sonarr_4k_email_from_address: "{{ mediastack_sonarr_email_from_address }}"
+mediastack_sonarr_anime_email_enable: "{{ mediastack_sonarr_email_enable }}"
+mediastack_sonarr_anime_email_from_name: "{{ mediastack_sonarr_email_from_name }}"
+mediastack_sonarr_anime_email_from_address: "{{ mediastack_sonarr_email_from_address }}"
+
+mediastack_sonarr_pushover_enable: "{{ mediastack_pushover_enable }}"
+mediastack_sonarr_pushover_api_key: "{{ mediastack_pushover_api_key }}"
+mediastack_sonarr_pushover_user_key: "{{ mediastack_pushover_user_key }}"
+
+mediastack_sonarr_hd_pushover_enable: "{{ mediastack_sonarr_pushover_enable }}"
+mediastack_sonarr_hd_pushover_api_key: "{{ mediastack_sonarr_pushover_api_key }}"
+mediastack_sonarr_hd_pushover_user_key: "{{ mediastack_sonarr_pushover_user_key }}"
+mediastack_sonarr_4k_pushover_enable: "{{ mediastack_sonarr_pushover_enable }}"
+mediastack_sonarr_4k_pushover_api_key: "{{ mediastack_sonarr_pushover_api_key }}"
+mediastack_sonarr_4k_pushover_user_key: "{{ mediastack_sonarr_pushover_user_key }}"
+mediastack_sonarr_anime_pushover_enable: "{{ mediastack_sonarr_pushover_enable }}"
+mediastack_sonarr_anime_pushover_api_key: "{{ mediastack_sonarr_pushover_api_key }}"
+mediastack_sonarr_anime_pushover_user_key: "{{ mediastack_sonarr_pushover_user_key }}"

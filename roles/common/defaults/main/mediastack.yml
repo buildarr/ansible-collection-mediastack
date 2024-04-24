@@ -1,0 +1,14 @@
+---
+
+mediastack_timezone: Etc/UTC
+
+mediastack_user_uid: 403
+mediastack_user_gid: 403
+
+mediastack_data_dir: /opt/mediastack/data
+
+mediastack_network_name: mediastack
+mediastack_network_subnets:
+  - 172.24.0.0/24
+
+mediastack_service_networks: []

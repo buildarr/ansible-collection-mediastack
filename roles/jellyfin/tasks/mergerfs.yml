@@ -1,0 +1,41 @@
+---
+
+- name: Unmount media library filesystems
+  ansible.posix.mount:
+    path: "{{ mediastack_data_dir }}/{{ item }}"
+    state: unmounted
+  loop:
+    - videos/shows
+    - videos/movies
+    - videos/anime/shows
+    - videos/anime/movies
+  # ansible_check_mode is not set when applying `check_mode` to a file using `include_tasks`.
+  when: not (mediastack_temp_check_mode | default(False))
+
+- name: Mount media library filesystems
+  ansible.posix.mount:
+    src: >-
+      {{ [mediastack_data_dir] | product(item.source_directories) | map('join', '/') | join(':') }}
+    path: "{{ mediastack_data_dir }}/{{ item.mountpoint }}"
+    fstype: "{{ mediastack_mergerfs_fstype }}"
+    opts: "{{ mediastack_mergerfs_opts }}"
+    dump: "0"  # No dump required on merged filesystem.
+    passno: "0"  # No filesystem checking required on merged filesystem.
+    state: mounted
+    backup: true
+  loop:
+    - mountpoint: videos/shows
+      source_directories:
+        - media/shows/hd
+        - media/shows/4k
+    - mountpoint: videos/movies
+      source_directories:
+        - media/movies/hd
+        - media/movies/4k
+    - mountpoint: videos/anime/shows
+      source_directories:
+        - media/shows/anime
+    - mountpoint: videos/anime/movies
+      source_directories:
+        - media/movies/anime
+  register: mediastack_temp_mounts

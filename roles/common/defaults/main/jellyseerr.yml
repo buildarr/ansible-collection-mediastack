@@ -1,0 +1,34 @@
+---
+
+mediastack_jellyseerr_image_uri: fallenbagel/jellyseerr
+mediastack_jellyseerr_image_tag: 1.7.0
+
+mediastack_jellyseerr_host_port: 5055
+
+mediastack_jellyseerr_log_level: debug
+
+mediastack_jellyseerr_jellyfin_username: "{{ mediastack_jellyfin_admin_username }}"
+mediastack_jellyseerr_jellyfin_password: "{{ mediastack_jellyfin_admin_password }}"
+mediastack_jellyseerr_jellyfin_email_address: "{{ mediastack_jellyfin_admin_email_address }}"
+mediastack_jellyseerr_jellyfin_external_url: "{{ mediastack_jellyfin_external_url }}"
+
+mediastack_jellyseerr_sonarr_hd_external_url: "{{ mediastack_sonarr_hd_external_url }}"
+mediastack_jellyseerr_sonarr_4k_external_url: "{{ mediastack_sonarr_4k_external_url }}"
+mediastack_jellyseerr_sonarr_anime_external_url: "{{ mediastack_sonarr_anime_external_url }}"
+
+mediastack_jellyseerr_radarr_hd_external_url: "{{ mediastack_radarr_hd_external_url }}"
+mediastack_jellyseerr_radarr_4k_external_url: "{{ mediastack_radarr_4k_external_url }}"
+mediastack_jellyseerr_radarr_anime_external_url: "{{ mediastack_radarr_anime_external_url }}"
+
+mediastack_jellyseerr_email_enable: "{{ mediastack_email_enable }}"
+mediastack_jellyseerr_email_from_name: "{{ mediastack_email_from_name }}"
+mediastack_jellyseerr_email_from_address: "{{ mediastack_email_from_address }}"
+mediastack_jellyseerr_email_smtp_hostname: "{{ mediastack_email_smtp_hostname }}"
+mediastack_jellyseerr_email_smtp_port: "{{ mediastack_email_smtp_port }}"
+mediastack_jellyseerr_email_smtp_protocol: "{{ mediastack_email_smtp_protocol }}"
+mediastack_jellyseerr_email_smtp_username: "{{ mediastack_email_smtp_username }}"
+mediastack_jellyseerr_email_smtp_password: "{{ mediastack_email_smtp_password }}"
+
+mediastack_jellyseerr_pushover_enable: "{{ mediastack_pushover_enable }}"
+mediastack_jellyseerr_pushover_api_key: "{{ mediastack_pushover_api_key }}"
+mediastack_jellyseerr_pushover_user_key: "{{ mediastack_pushover_user_key }}"

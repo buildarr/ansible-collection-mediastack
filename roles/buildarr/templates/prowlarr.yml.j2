@@ -1,0 +1,282 @@
+---
+# Prowlarr instance configuration in Buildarr.
+
+prowlarr:
+
+  # Configuration common to all instances.
+  port: 9696
+  protocol: "http"
+  settings:
+    general:
+      host:
+        bind_address: "*"
+        port: 9696
+        url_base: null
+        use_ssl: false
+      proxy:
+        enable: false
+      logging:
+        log_level: "DEBUG"
+      analytics:
+        send_anonymous_usage_data: false
+      updates:
+        branch: "master"
+        automatic: false
+        mechanism: "docker"
+      backup:
+        folder: "Backups"
+        interval: 7
+        retention: 28
+    ui:
+      first_day_of_week: "monday"
+      week_column_header: "day-first"
+      short_date_format: "word-month-second"
+      long_date_format: "day-first"
+      time_format: "twentyfour-hour"
+      show_relative_dates: true
+      enable_color_impaired_mode: false
+      theme: "auto"
+      ui_language: "en"
+
+  # Instance-specific configuration.
+  instances:
+
+    # One Prowlarr instance for tracking all kinds of media.
+    prowlarr:
+      api_key: "{{ mediastack_temp_api_keys['prowlarr'] }}"
+      settings:
+        indexers:
+          indexers:
+            definitions:
+              "Nyaa.si":
+                type: nyaasi
+                enable: true
+                sync_profile: Standard
+                redirect: false
+                priority: 15
+                grab_limit: {{ mediastack_prowlarr_grab_limit }}
+                query_limit: {{ mediastack_prowlarr_query_limit }}
+                tags:
+                  - shows
+                  - movies
+                  - anime-shows
+                  - anime-movies
+                fields:
+                  torrentBaseSettings.seedRatio: {{ mediastack_prowlarr_seed_ratio if mediastack_prowlarr_seed_ratio is integer else "null" }}
+                  prefer_magnet_links: true
+              "1337x":
+                type: 1337x
+                enable: true
+                sync_profile: Standard
+                redirect: false
+                priority: 25
+                grab_limit: {{ mediastack_prowlarr_grab_limit }}
+                query_limit: {{ mediastack_prowlarr_query_limit }}
+                tags:
+                  - shows
+                  - movies
+                  - cloudflare
+                fields:
+                  torrentBaseSettings.seedRatio: {{ mediastack_prowlarr_seed_ratio if mediastack_prowlarr_seed_ratio is integer else "null" }}
+              "EZTV":
+                type: eztv
+                enable: true
+                sync_profile: Standard
+                redirect: false
+                priority: 25
+                grab_limit: {{ mediastack_prowlarr_grab_limit }}
+                query_limit: {{ mediastack_prowlarr_query_limit }}
+                tags:
+                  - shows
+                fields:
+                  torrentBaseSettings.seedRatio: {{ mediastack_prowlarr_seed_ratio if mediastack_prowlarr_seed_ratio is integer else "null" }}
+              "YTS":
+                type: yts
+                enable: true
+                sync_profile: Standard
+                redirect: false
+                priority: 25
+                grab_limit: {{ mediastack_prowlarr_grab_limit }}
+                query_limit: {{ mediastack_prowlarr_query_limit }}
+                tags:
+                  - movies
+                fields:
+                  torrentBaseSettings.seedRatio: {{ mediastack_prowlarr_seed_ratio if mediastack_prowlarr_seed_ratio is integer else "null" }}
+              "TorrentGalaxy":
+                type: torrentgalaxy
+                enable: false
+                sync_profile: Standard
+                redirect: false
+                priority: 35
+                grab_limit: {{ mediastack_prowlarr_grab_limit }}
+                query_limit: {{ mediastack_prowlarr_query_limit }}
+                tags:
+                  - shows
+                  - movies
+                fields:
+                  torrentBaseSettings.seedRatio: {{ mediastack_prowlarr_seed_ratio if mediastack_prowlarr_seed_ratio is integer else "null" }}
+          proxies:
+            definitions:
+              "FlareSolverr":
+                type: "flaresolverr"
+                host_url: "http://flaresolverr:8191"
+                request_timeout: 60
+                tags:
+                  - cloudflare
+        apps:
+          applications:
+            definitions:
+              "Sonarr (HD/SD Shows)":
+                type: "sonarr"
+                instance_name: "sonarr-hd"
+                prowlarr_url: "http://prowlarr:9696"
+                base_url: "http://sonarr-hd:8989"
+                sync_level: "full-sync"
+                sync_categories:
+                  - "TV/WEB-DL"
+                  - "TV/Foreign"
+                  - "TV/SD"
+                  - "TV/HD"
+                  - "TV/Other"
+                anime_sync_categories: []
+                tags:
+                  - "shows"
+              "Sonarr (4K Shows)":
+                type: "sonarr"
+                instance_name: "sonarr-4k"
+                prowlarr_url: "http://prowlarr:9696"
+                base_url: "http://sonarr-4k:8989"
+                sync_level: "full-sync"
+                sync_categories:
+                  - "TV/WEB-DL"
+                  - "TV/Foreign"
+                  - "TV/UHD"
+                  - "TV/Other"
+                anime_sync_categories: []
+                tags:
+                  - "shows"
+              "Sonarr (Anime Shows)":
+                type: "sonarr"
+                instance_name: "sonarr-anime"
+                prowlarr_url: "http://prowlarr:9696"
+                base_url: "http://sonarr-anime:8989"
+                sync_level: "full-sync"
+                sync_categories:
+                  - "TV/Anime"
+                anime_sync_categories:
+                  - "TV/Anime"
+                tags:
+                  - "anime-shows"
+              "Radarr (HD/SD Movies)":
+                type: "radarr"
+                instance_name: "radarr-hd"
+                prowlarr_url: "http://prowlarr:9696"
+                base_url: "http://radarr-hd:7878"
+                sync_level: "full-sync"
+                sync_categories:
+                  - "Movies/Foreign"
+                  - "Movies/Other"
+                  - "Movies/SD"
+                  - "Movies/HD"
+                  - "Movies/BluRay"
+                  - "Movies/DVD"
+                  - "Movies/WEB-DL"
+                tags:
+                  - "movies"
+              "Radarr (4K Movies)":
+                type: "radarr"
+                instance_name: "radarr-4k"
+                prowlarr_url: "http://prowlarr:9696"
+                base_url: "http://radarr-4k:7878"
+                sync_level: "full-sync"
+                sync_categories:
+                  - "Movies/Foreign"
+                  - "Movies/Other"
+                  - "Movies/UHD"
+                  - "Movies/BluRay"
+                  - "Movies/WEB-DL"
+                tags:
+                  - "movies"
+              "Radarr (Anime Movies)":
+                type: "radarr"
+                instance_name: "radarr-anime"
+                prowlarr_url: "http://prowlarr:9696"
+                base_url: "http://radarr-anime:7878"
+                sync_level: "full-sync"
+                sync_categories:
+                  - "Movies/Foreign"
+                  - "Movies/Other"
+                  - "Movies/SD"
+                  - "Movies/HD"
+                  - "Movies/BluRay"
+                  - "Movies/DVD"
+                  - "Movies/WEB-DL"
+                tags:
+                  - "anime-movies"
+          sync_profiles:
+            definitions:
+              "Standard":
+                enable_rss: true
+                enable_interactive_search: true
+                enable_automatic_search: true
+                minimum_seeders: {{ mediastack_prowlarr_minimum_seeders }}
+        download_clients:
+          definitions:
+            "Transmission (Prowlarr)":
+              type: "transmission"
+              enable: true
+              host: "transmission"
+              port: 9091
+              use_ssl: false
+              url_base: "/transmission/"
+              username: null
+              password: null
+              # category: "prowlarr"
+              directory: "/data/torrents/prowlarr"
+              client_priority: "last"
+              add_paused: false
+        notifications:
+          delete_unmanaged: true
+{% if mediastack_prowlarr_email_enable or mediastack_prowlarr_pushover_enable %}
+          definitions:
+{% if mediastack_prowlarr_email_enable %}
+            email:
+              type: email
+              enable: true
+              server: '{{ mediastack_prowlarr_email_smtp_hostname }}'
+              port: {{ mediastack_email_smtp_port }}
+              use_encryption: true
+              username: '{{ mediastack_prowlarr_email_smtp_username }}'
+              password: '{{ mediastack_prowlarr_email_smtp_password }}'
+              from_address: '{{ mediastack_prowlarr_email_from_name }} <{{ mediastack_prowlarr_email_from_address }}>'
+              recipient_addresses:
+                - '{{ mediastack_prowlarr_email_recipient_name }} <{{ mediastack_prowlarr_email_recipient_address }}>'
+              notification_triggers:
+                on_health_issue: true
+                include_health_warnings: true
+                on_application_update: true
+{% endif %}
+{% if mediastack_prowlarr_pushover_enable %}
+            pushover:
+              type: pushover
+              enable: true
+              user_key: '{{ mediastack_prowlarr_pushover_user_key }}'
+              api_key: '{{ mediastack_prowlarr_pushover_api_key }}'
+              notification_triggers:
+                on_health_issue: true
+                include_health_warnings: true
+                on_application_update: false
+{% endif %}
+{% else %}
+      definitions: {}
+{% endif %}
+        tags:
+          definitions:
+            - "shows"
+            - "movies"
+            - "anime-shows"
+            - "anime-movies"
+            - cloudflare
+        general:
+          host:
+            instance_name: "Prowlarr"

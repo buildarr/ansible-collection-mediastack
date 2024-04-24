@@ -1,0 +1,15 @@
+---
+
+mediastack_email_enable: false
+
+mediastack_email_from_name: Media Stack
+mediastack_email_from_address: mediastack@example.com
+
+mediastack_email_recipient_name: Example Address
+mediastack_email_recipient_address: example@example.com
+
+mediastack_email_smtp_hostname: smtp.example.com
+mediastack_email_smtp_port: 465
+mediastack_email_smtp_protocol: smtps  # `starttls` can also be used.
+mediastack_email_smtp_username: example
+# mediastack_email_smtp_password must be encrypted using Ansible Vault.

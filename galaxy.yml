@@ -1,0 +1,17 @@
+---
+
+namespace: buildarr
+name: mediastack
+version: 0.1.0
+description: An Ansible collection for managing a Buildarr-based media stack.
+readme: README.md
+repository: https://github.com/buildarr/ansible-collection-mediastack
+tags:
+  - infrastructure
+
+authors:
+  - Callum Dickinson <callum.dickinson.nz@gmail.com>
+dependencies:
+  ansible.posix: ">=1.5.4"
+  community.docker: ">=3.0.0"
+  community.general: ">=7.0.0"

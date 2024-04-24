@@ -1,0 +1,57 @@
+---
+
+version: "3.7"
+
+services:
+  jellyfin:
+    image: '{{ mediastack_jellyfin_image_uri }}:{{ mediastack_jellyfin_image_tag }}'
+    container_name: jellyfin
+    restart: always
+    environment:
+      TZ: '{{ mediastack_timezone }}'
+      PUID: '{{ mediastack_user_uid }}'
+      PGID: '{{ mediastack_user_gid }}'
+      # The URL to publish via the Jellyfin server autodiscovery protocol.
+      JELLYFIN_PublishedServerUrl: '{{ mediastack_jellyfin_external_url }}'
+    volumes:
+      - type: bind
+        source: ./config
+        target: /config
+        read_only: false
+      - type: bind
+        source: '{{ mediastack_data_dir }}/media'
+        target: /data/media
+        read_only: true
+      - type: bind
+        source: '{{ mediastack_data_dir }}/videos'
+        target: /data/videos
+        read_only: true
+    ports:
+      # Jellyfin exposes the following ports.
+      # We only use port 8096 since we don't care about DLNA,
+      # and we reverse proxy for HTTPS.
+      #   * 1900 (UDP) - DLNA service discovery port
+      #   * 7359 (UDP) - DLNA client discovery port
+      #   * 8096 (TCP) - API/Web UI (HTTP)
+      #   * 8920 (TCP) - API/Web UI (HTTPS)
+      - 127.0.0.1:{{ mediastack_jellyfin_host_port }}:8096
+    networks:
+      - '{{ mediastack_network_name }}'
+{% for network in mediastack_service_networks %}
+{% if 'jellyfin' in (network.services | default([])) %}
+      - '{{ network.name }}'
+{% endif %}
+{% endfor %}
+    devices:
+      # Grant access to the Intel iGPU for transcoding using VA-API and Quick Sync Video.
+      - /dev/dri:/dev/dri
+
+networks:
+  '{{ mediastack_network_name }}':
+    name: '{{ mediastack_network_name }}'
+    external: true
+{% for network in mediastack_service_networks %}
+  '{{ network.name }}':
+    name: '{{ network.name }}'
+    external: true
+{% endfor %}

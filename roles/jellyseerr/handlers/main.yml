@@ -1,0 +1,8 @@
+---
+
+- name: Stop service
+  ansible.builtin.command:
+    cmd: docker compose --ansi never --progress plain --file docker-compose.yml down
+    chdir: /opt/mediastack/jellyseerr
+  changed_when: true
+  listen: stop jellyseerr

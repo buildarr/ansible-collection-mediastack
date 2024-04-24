@@ -1,0 +1,92 @@
+---
+
+- name: Set common default variables
+  ansible.builtin.import_role:
+    name: common
+
+- name: Create global service directory
+  ansible.builtin.file:
+    state: directory
+    path: /opt/mediastack/sonarr
+    owner: root
+    group: docker
+    mode: "0755"
+
+- name: Create per-instance service directories
+  ansible.builtin.file:
+    state: directory
+    path: "/opt/mediastack/sonarr/{{ item.name }}"
+    owner: root
+    group: docker
+    mode: "0755"
+  loop: "{{ mediastack_sonarr_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Create per-instance configuration directories
+  ansible.builtin.file:
+    state: directory
+    path: "/opt/mediastack/sonarr/{{ item.name }}/config"
+    owner: mediastack
+    group: mediastack
+    mode: "0750"
+  loop: "{{ mediastack_sonarr_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Create service definition files
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "/opt/mediastack/sonarr/{{ sonarr_instance.name }}/docker-compose.yml"
+    owner: root
+    group: docker
+    mode: "0640"
+  register: mediastack_temp_service_files
+  loop: "{{ mediastack_sonarr_instances }}"
+  loop_control:
+    loop_var: sonarr_instance
+    label: "{{ sonarr_instance.name }}"
+
+- name: Validate service definition files
+  ansible.builtin.command:
+    cmd: docker compose --file docker-compose.yml config --quiet
+    chdir: "/opt/mediastack/sonarr/{{ item.name }}"
+  changed_when: false
+  loop: "{{ mediastack_sonarr_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Stop services (if changed)
+  ansible.builtin.command:
+    cmd: docker compose --ansi never --progress plain --file docker-compose.yml down
+    chdir: "/opt/mediastack/sonarr/{{ item.name }}"
+  changed_when: true
+  when: mediastack_temp_service_files.results[index].changed
+  loop: "{{ mediastack_sonarr_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+    index_var: index
+
+- name: Start services
+  ansible.builtin.command:
+    cmd: docker compose --ansi never --progress plain --file docker-compose.yml up --detach
+    chdir: "/opt/mediastack/sonarr/{{ item.name }}"
+  register: mediastack_temp_service_start
+  changed_when: "'Started' in mediastack_temp_service_start.stdout"
+  loop: "{{ mediastack_sonarr_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Wait for services to be accessible
+  ansible.builtin.uri:
+    url: "http://localhost:{{ item.host_port }}"
+    status_code:
+      - 200
+      - 302
+  register: mediastack_temp_service_test
+  until: mediastack_temp_service_test is not failed
+  retries: 300
+  delay: 1
+  loop: "{{ mediastack_sonarr_instances }}"
+  loop_control:
+    label: "{{ item.name }}"

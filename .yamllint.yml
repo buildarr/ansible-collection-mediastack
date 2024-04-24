@@ -1,0 +1,12 @@
+---
+# .yamllint.yml
+# yamllint configuration.
+
+extends: default
+
+rules:
+  line-length:
+    max: 100
+
+ignore:
+  - changelogs

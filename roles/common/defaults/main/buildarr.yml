@@ -1,0 +1,4 @@
+---
+
+mediastack_buildarr_image_uri: callum027/buildarr
+mediastack_buildarr_image_tag: 0.6.2

@@ -1,0 +1,6 @@
+---
+
+mediastack_pushover_enable: false
+
+# `mediastack_pushover_api_key` is required if `mediastack_pushover_enable` is `true`.
+# `mediastack_pushover_user_key` is required if `mediastack_pushover_enable` is `true`.

@@ -1,0 +1,35 @@
+---
+
+version: "3.7"
+
+services:
+  buildarr:
+    image: '{{ mediastack_buildarr_image_uri }}:{{ mediastack_buildarr_image_tag }}'
+    container_name: buildarr
+    restart: always
+    environment:
+      TZ: '{{ mediastack_timezone }}'
+      PUID: '{{ mediastack_user_uid }}'
+      PGID: '{{ mediastack_user_gid }}'
+    volumes:
+      - type: bind
+        source: ./config
+        target: /config
+        read_only: false
+    networks:
+      - '{{ mediastack_network_name }}'
+{% for network in mediastack_service_networks %}
+{% if 'buildarr' in (network.services | default([])) %}
+      - '{{ network.name }}'
+{% endif %}
+{% endfor %}
+
+networks:
+  '{{ mediastack_network_name }}':
+    name: '{{ mediastack_network_name }}'
+    external: true
+{% for network in mediastack_service_networks %}
+  '{{ network.name }}':
+    name: '{{ network.name }}'
+    external: true
+{% endfor %}

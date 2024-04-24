@@ -1,0 +1,22 @@
+---
+
+includes:
+  - sonarr.yml
+  - radarr.yml
+  - prowlarr.yml
+  - jellyseerr.yml
+
+buildarr:
+  watch_config: false  # Tell Buildarr to reload using SIGHUP.
+  update_days:
+    - "monday"
+    - "tuesday"
+    - "wednesday"
+    - "thursday"
+    - "friday"
+    - "saturday"
+    - "sunday"
+  update_times:
+    - "03:00"
+  request_timeout: 30
+  secrets_file_path: "secrets.json"

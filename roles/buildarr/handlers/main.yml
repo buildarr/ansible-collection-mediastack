@@ -1,0 +1,26 @@
+---
+
+- name: Stop service
+  ansible.builtin.command:
+    cmd: docker compose --ansi never --progress plain --file docker-compose.yml down
+    chdir: /opt/mediastack/buildarr
+  changed_when: true
+  listen: stop buildarr
+
+- name: Reload service
+  ansible.builtin.command:
+    argv:
+      - docker
+      - compose
+      - --ansi
+      - never
+      - --progress
+      - plain
+      - --file
+      - docker-compose.yml
+      - kill
+      - --signal=SIGHUP
+      - buildarr
+    chdir: /opt/mediastack/buildarr
+  changed_when: true
+  listen: reload buildarr

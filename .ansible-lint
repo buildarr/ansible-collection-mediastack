@@ -1,0 +1,11 @@
+---
+
+profile: production
+
+skip_list:
+  - name[template]
+  - var-naming[no-role-prefix]
+  - meta-runtime[unsupported-version]
+
+# exclude_paths:
+#   -

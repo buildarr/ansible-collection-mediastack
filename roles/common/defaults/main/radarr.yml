@@ -1,0 +1,54 @@
+---
+
+mediastack_radarr_image_uri: lscr.io/linuxserver/radarr
+mediastack_radarr_image_tag: 4.7.5
+
+mediastack_radarr_instances:
+  - name: radarr-hd
+    host_port: 7878
+    default: true
+    is_4k: false
+  - name: radarr-4k
+    host_port: 7879
+    default: true
+    is_4k: true
+  - name: radarr-anime
+    host_port: 7880
+
+mediastack_radarr_hd_external_url: http://localhost:7878
+mediastack_radarr_4k_external_url: http://localhost:7879
+mediastack_radarr_anime_external_url: http://localhost:7880
+
+mediastack_radarr_email_enable: "{{ mediastack_email_from_name }}"
+mediastack_radarr_email_from_name: "{{ mediastack_email_from_name }}"
+mediastack_radarr_email_from_address: "{{ mediastack_email_from_address }}"
+mediastack_radarr_email_recipient_name: "{{ mediastack_email_recipient_name }}"
+mediastack_radarr_email_recipient_address: "{{ mediastack_email_recipient_address }}"
+mediastack_radarr_email_smtp_hostname: "{{ mediastack_email_smtp_hostname }}"
+mediastack_radarr_email_smtp_port: "{{ mediastack_email_smtp_port }}"
+mediastack_radarr_email_smtp_username: "{{ mediastack_email_smtp_username }}"
+mediastack_radarr_email_smtp_password: "{{ mediastack_email_smtp_password }}"
+
+mediastack_radarr_hd_email_enable: "{{ mediastack_radarr_email_enable }}"
+mediastack_radarr_hd_email_from_name: "{{ mediastack_radarr_email_from_name }}"
+mediastack_radarr_hd_email_from_address: "{{ mediastack_radarr_email_from_address }}"
+mediastack_radarr_4k_email_enable: "{{ mediastack_radarr_email_enable }}"
+mediastack_radarr_4k_email_from_name: "{{ mediastack_radarr_email_from_name }}"
+mediastack_radarr_4k_email_from_address: "{{ mediastack_radarr_email_from_address }}"
+mediastack_radarr_anime_email_enable: "{{ mediastack_radarr_email_enable }}"
+mediastack_radarr_anime_email_from_name: "{{ mediastack_radarr_email_from_name }}"
+mediastack_radarr_anime_email_from_address: "{{ mediastack_radarr_email_from_address }}"
+
+mediastack_radarr_pushover_enable: "{{ mediastack_pushover_enable }}"
+mediastack_radarr_pushover_api_key: "{{ mediastack_pushover_api_key }}"
+mediastack_radarr_pushover_user_key: "{{ mediastack_pushover_user_key }}"
+
+mediastack_radarr_hd_pushover_enable: "{{ mediastack_radarr_pushover_enable }}"
+mediastack_radarr_hd_pushover_api_key: "{{ mediastack_radarr_pushover_api_key }}"
+mediastack_radarr_hd_pushover_user_key: "{{ mediastack_radarr_pushover_user_key }}"
+mediastack_radarr_4k_pushover_enable: "{{ mediastack_radarr_pushover_enable }}"
+mediastack_radarr_4k_pushover_api_key: "{{ mediastack_radarr_pushover_api_key }}"
+mediastack_radarr_4k_pushover_user_key: "{{ mediastack_radarr_pushover_user_key }}"
+mediastack_radarr_anime_pushover_enable: "{{ mediastack_radarr_pushover_enable }}"
+mediastack_radarr_anime_pushover_api_key: "{{ mediastack_radarr_pushover_api_key }}"
+mediastack_radarr_anime_pushover_user_key: "{{ mediastack_radarr_pushover_user_key }}"

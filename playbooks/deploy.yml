@@ -1,0 +1,4 @@
+---
+
+- name: Deploy Media Stack
+  ansible.builtin.import_playbook: deploy_mediastack.yml

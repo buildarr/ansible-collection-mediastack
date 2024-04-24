@@ -1,0 +1,28 @@
+---
+
+mediastack_prowlarr_image_uri: lscr.io/linuxserver/prowlarr
+mediastack_prowlarr_image_tag: 1.8.6
+
+mediastack_prowlarr_host_port: 9696
+
+mediastack_prowlarr_grab_limit: 104
+mediastack_prowlarr_query_limit: 10010  # 13 * 769
+
+mediastack_prowlarr_minimum_seeders: 1
+
+# Set to null or an empty string to use the download client's default.
+mediastack_prowlarr_seed_ratio: null
+
+mediastack_prowlarr_email_enable: "{{ mediastack_email_enable }}"
+mediastack_prowlarr_email_from_name: "{{ mediastack_email_from_name }}"
+mediastack_prowlarr_email_from_address: "{{ mediastack_email_from_address }}"
+mediastack_prowlarr_email_recipient_name: "{{ mediastack_email_recipient_name }}"
+mediastack_prowlarr_email_recipient_address: "{{ mediastack_email_recipient_address }}"
+mediastack_prowlarr_email_smtp_hostname: "{{ mediastack_email_smtp_hostname }}"
+mediastack_prowlarr_email_smtp_port: "{{ mediastack_email_smtp_port }}"
+mediastack_prowlarr_email_smtp_username: "{{ mediastack_email_smtp_username }}"
+mediastack_prowlarr_email_smtp_password: "{{ mediastack_email_smtp_password }}"
+
+mediastack_prowlarr_pushover_enable: "{{ mediastack_pushover_enable }}"
+mediastack_prowlarr_pushover_api_key: "{{ mediastack_pushover_api_key }}"
+mediastack_prowlarr_pushover_user_key: "{{ mediastack_pushover_user_key }}"

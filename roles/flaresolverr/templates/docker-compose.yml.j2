@@ -1,0 +1,31 @@
+---
+
+version: "3.7"
+
+services:
+  flaresolverr:
+    image: '{{ mediastack_flaresolverr_image_uri }}:{{ mediastack_flaresolverr_image_tag }}'
+    container_name: flaresolverr
+    restart: always
+    environment:
+      TZ: '{{ mediastack_timezone }}'
+      LOG_LEVEL: "info"
+    ports:
+      - 127.0.0.1:{{ mediastack_flaresolverr_host_port }}:8191
+    networks:
+      - '{{ mediastack_network_name }}'
+{% for network in mediastack_service_networks %}
+{% if 'flaresolverr' in (network.services | default([])) %}
+      - '{{ network.name }}'
+{% endif %}
+{% endfor %}
+
+networks:
+  '{{ mediastack_network_name }}':
+    name: '{{ mediastack_network_name }}'
+    external: true
+{% for network in mediastack_service_networks %}
+  '{{ network.name }}':
+    name: '{{ network.name }}'
+    external: true
+{% endfor %}

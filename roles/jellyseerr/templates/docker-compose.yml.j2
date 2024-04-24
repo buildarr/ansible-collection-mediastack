@@ -1,0 +1,37 @@
+---
+
+version: "3.7"
+
+services:
+  jellyseerr:
+    image: '{{ mediastack_jellyseerr_image_uri }}:{{ mediastack_jellyseerr_image_tag }}'
+    container_name: jellyseerr
+    restart: always
+    user: '{{ mediastack_user_uid }}:{{ mediastack_user_gid }}'
+    environment:
+      TZ: '{{ mediastack_timezone }}'
+      LOG_LEVEL: '{{ mediastack_jellyseerr_log_level }}'
+    volumes:
+      - type: bind
+        source: ./config
+        target: /app/config
+        read_only: false
+    ports:
+      - 127.0.0.1:{{ mediastack_jellyseerr_host_port }}:5055
+    networks:
+      - '{{ mediastack_network_name }}'
+{% for network in mediastack_service_networks %}
+{% if 'jellyseerr' in (network.services | default([])) %}
+      - '{{ network.name }}'
+{% endif %}
+{% endfor %}
+
+networks:
+  '{{ mediastack_network_name }}':
+    name: '{{ mediastack_network_name }}'
+    external: true
+{% for network in mediastack_service_networks %}
+  '{{ network.name }}':
+    name: '{{ network.name }}'
+    external: true
+{% endfor %}

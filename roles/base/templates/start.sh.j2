@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -euo pipefail
+
+service_dirs="jellyfin transmission flaresolverr {{ ['sonarr/'] | product(mediastack_sonarr_instances | map(attribute='name')) | map('join') | join(' ') }} {{ ['radarr/'] | product(mediastack_radarr_instances | map(attribute='name')) | map('join') | join(' ') }} prowlarr jellyseerr buildarr"
+
+for service_dir in $service_dirs
+do
+    cd "/opt/mediastack/${service_dir}"
+    docker compose --file docker-compose.yml up --detach
+done

@@ -1,0 +1,84 @@
+---
+
+- name: Set common default variables
+  ansible.builtin.import_role:
+    name: common
+
+- name: Install mergerfs
+  ansible.builtin.apt:
+    name: mergerfs
+    cache_valid_time: "{{ mediastack_apt_cache_time }}"
+
+- name: Create service directory
+  ansible.builtin.file:
+    state: directory
+    path: /opt/mediastack/jellyfin
+    owner: root
+    group: docker
+    mode: "0755"
+
+- name: Create configuration directory
+  ansible.builtin.file:
+    state: directory
+    path: /opt/mediastack/jellyfin/config
+    owner: mediastack
+    group: mediastack
+    mode: "0750"
+
+- name: Create service definition file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/mediastack/jellyfin/docker-compose.yml
+    owner: root
+    group: docker
+    mode: "0640"
+  notify: stop jellyfin
+
+- name: Validate service definition file
+  ansible.builtin.command:
+    cmd: docker compose --file docker-compose.yml config --quiet
+    chdir: /opt/mediastack/jellyfin
+  changed_when: false
+
+- name: Check if the media library filesystem mounts need to be updated
+  ansible.builtin.include_tasks:
+    file: mergerfs.yml
+    apply:
+      check_mode: true
+  # ansible_check_mode is not set when applying `check_mode` to a file using `include_tasks`.
+  vars:
+    mediastack_temp_check_mode: true
+
+- name: Stop Jellyfin (if the media library filesystem mounts need to be updated)
+  ansible.builtin.assert:
+    that: true
+    quiet: true
+  when: (mediastack_temp_mounts.results | map(attribute='changed')) is any
+  changed_when: true
+  notify: stop jellyfin
+
+- name: Flush handlers (to stop service as required)
+  ansible.builtin.meta: flush_handlers
+
+- name: Mount/remount the media library filesystems (if changes were detected)
+  ansible.builtin.include_tasks:
+    file: mergerfs.yml
+  when: (mediastack_temp_mounts.results | map(attribute='changed')) is any
+
+- name: Start service
+  ansible.builtin.command:
+    cmd: docker compose --ansi never --progress plain --file docker-compose.yml up --detach
+    chdir: /opt/mediastack/jellyfin
+  register: mediastack_temp_service_start
+  changed_when: "'Started' in mediastack_temp_service_start.stdout"
+
+- name: Wait for service to be accessible
+  ansible.builtin.uri:
+    url: "http://localhost:{{ mediastack_jellyfin_host_port }}"
+    status_code:
+      - 200
+      - 302
+  register: mediastack_temp_service_test
+  until: mediastack_temp_service_test is not failed
+  retries: 300
+  delay: 1

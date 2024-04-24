@@ -1,0 +1,6 @@
+---
+
+mediastack_flaresolverr_image_uri: ghcr.io/flaresolverr/flaresolverr
+mediastack_flaresolverr_image_tag: v3.3.6
+
+mediastack_flaresolverr_host_port: 8191
