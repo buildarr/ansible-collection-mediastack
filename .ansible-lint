@@ -6,6 +6,9 @@ skip_list:
   - name[template]
   - var-naming[no-role-prefix]
   - meta-runtime[unsupported-version]
+  # TODO: Re-enable when getting ready to upload to Ansible Galaxy.
+  - galaxy[no-changelog]
+  - galaxy[version-incorrect]
 
 # exclude_paths:
 #   -

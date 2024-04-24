@@ -56,7 +56,8 @@
   loop_control:
     label: "{{ item.name }}"
 
-- name: Stop services (if changed)
+# TODO: Evaluate switching to handlers.
+- name: Stop services (if changed)  # noqa: no-handler
   ansible.builtin.command:
     cmd: docker compose --ansi never --progress plain --file docker-compose.yml down
     chdir: "/opt/mediastack/sonarr/{{ item.name }}"

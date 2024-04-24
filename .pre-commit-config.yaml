@@ -26,8 +26,8 @@ repos:
     rev: v24.2.1
     hooks:
       - id: ansible-lint
-  # - repo: https://github.com/ansible-community/antsibull-changelog.git
-  #   rev: 0.26.0
-  #   hooks:
-  #     - id: antsibull-changelog-lint
-  #     - id: antsibull-changelog-lint-changelog-yaml
+#   - repo: https://github.com/ansible-community/antsibull-changelog.git
+#     rev: 0.26.0
+#     hooks:
+#       - id: antsibull-changelog-lint
+#       - id: antsibull-changelog-lint-changelog-yaml
